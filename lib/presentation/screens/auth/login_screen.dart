@@ -1,7 +1,11 @@
+
+import 'package:asistencia_vehicular_cliente/presentation/blocs/loca_storage_bloc/local_storage_bloc.dart';
+import 'package:asistencia_vehicular_cliente/presentation/widgets/alert_dialog_custon.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/button_custon.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/input_text_custon.dart';
 import 'package:asistencia_vehicular_cliente/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final authService = AuthService();
   @override
   Widget build(BuildContext context) {
+    final localStorageBloc = context.watch<LocalStorageBloc>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar Sesión'),
@@ -44,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true),
               const SizedBox(height: 10),
               ButtonCuston(
-                  textTitle: 'Iniciar Sesión', onPressed: onSubmitLogin),
+                  textTitle: 'Iniciar Sesión', onPressed: () => onSubmitLogin(localStorageBloc)),
               const SizedBox(height: 5),
               Center(
                 child: TextButton(
@@ -64,13 +69,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onSubmitLogin() {
+  void onSubmitLogin(LocalStorageBloc localStorageBloc) {
     if (_correoController.text.isNotEmpty &&
         _contrasenaController.text.isNotEmpty) {
       authService
           .login(_correoController.text, _contrasenaController.text)
-          .then((res) => {print(res)})
-          .catchError((err) {
+          .then((res) {
+        if (res['success'] ?? false) {
+          localStorageBloc.setUser(res['data']);
+          context.replaceNamed('/home_cliente');
+          return;
+        }
+        showAlertCuston(context, 'Error al autenticarse', () { 
+          context.pop();
+        });
+        return;
+      }).catchError((err) {
         print(err);
       });
     }

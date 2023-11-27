@@ -10,28 +10,20 @@ class AuthService extends ChangeNotifier {
     try {
       //final hasConnection = await hasInternet();
       //f (!hasConnection) return 'Revise su conexión a internet';
-      final url = Uri.http(
-        baseUrl,
-        '/auth/login',
-        {
-          'email': email,
-          'passwd': password,
-        },
+      final url = Uri.http(baseUrl, '/public/api/login');
+      final body = {'email': email, 'password': password};
+      final resp = await http.post(
+        url,
+        headers: {'Accept': 'application/json'},
+        body: body,
       );
-      final resp = await http.get(url);
       final Map<String, dynamic> decodedResp = json.decode(resp.body);
       if (resp.statusCode == 200) {
         return decodedResp;
       }
-      return {
-        'status': 400,
-        'message': 'Error de autenticación'
-      };
+      return {'status': 400, 'message': 'Error de autenticación'};
     } catch (e) {
-      return {
-        'status': 500,
-        'message': 'Error de conexión con servidor'
-      };
+      return {'status': 500, 'message': 'Error de conexión con servidor'};
     }
   }
 
