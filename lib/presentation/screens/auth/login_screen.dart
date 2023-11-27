@@ -1,5 +1,6 @@
 import 'package:asistencia_vehicular_cliente/presentation/widgets/button_custon.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/input_text_custon.dart';
+import 'package:asistencia_vehicular_cliente/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _correoController = TextEditingController();
   final _contrasenaController = TextEditingController();
-
+  final authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   inputType: TextInputType.visiblePassword,
                   obscureText: true),
               const SizedBox(height: 10),
-              ButtonCuston(textTitle: 'Registrar', onPressed: () {}),
+              ButtonCuston(
+                  textTitle: 'Iniciar Sesión', onPressed: onSubmitLogin),
               const SizedBox(height: 5),
               Center(
                 child: TextButton(
@@ -60,5 +62,17 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void onSubmitLogin() {
+    if (_correoController.text.isNotEmpty &&
+        _contrasenaController.text.isNotEmpty) {
+      authService
+          .login(_correoController.text, _contrasenaController.text)
+          .then((res) => {print(res)})
+          .catchError((err) {
+        print(err);
+      });
+    }
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:asistencia_vehicular_cliente/domain/helper/register_data.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/button_custon.dart';
@@ -109,13 +108,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void onSubmitRegister() {
-    if (_nombreController.text.isNotEmpty &&
+    if (
+      _nombreController.text.isNotEmpty &&
         _apellidoController.text.isNotEmpty &&
         _telefonoController.text.isNotEmpty &&
         _ciController.text.isNotEmpty &&
         _direccionController.text.isNotEmpty &&
         _correoController.text.isNotEmpty &&
-        _contrasenaController.text.isNotEmpty) {
+        _contrasenaController.text.isNotEmpty
+        )
+         {
       final data = RegisterData(
           _nombreController.text,
           _apellidoController.text,
@@ -124,8 +126,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
           int.parse(_telefonoController.text),
           _correoController.text,
           _contrasenaController.text);
-          print("${data.nombre} + ${data.apellido} + ${data.ci} + ${data.direccion} + ${data.telefono} + ${data.email} + ${data.password}");
-          authService.register(data);
+          //print("${data.nombre} + ${data.apellido} + ${data.ci} + ${data.direccion} + ${data.telefono} + ${data.email} + ${data.password}");
+          authService.register(data)
+          .then((res) {
+            _mostrarAlerta(context, "Usuario creado exitosamente");
+            context.replaceNamed('/login');
+          }).catchError( (err) {
+            _mostrarAlerta(context, "Error al registrar");
+          });
     }
+  }
+    // Función para mostrar la alerta
+  void _mostrarAlerta(BuildContext context, String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Alerta'),
+          content: Text(text),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
