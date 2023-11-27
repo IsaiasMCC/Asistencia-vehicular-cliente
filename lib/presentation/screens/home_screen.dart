@@ -4,10 +4,26 @@ import 'package:go_router/go_router.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final List<CardInfo> cardInfoList = [
-    CardInfo(icon: Icons.car_repair, title: 'Gestionar Vehiculo', color: Colors.blue, route: '/car/register'),
-    CardInfo(icon: Icons.swipe_up_outlined, title: 'Asistencia', color: Colors.green, route: '/asistencia'),
-    CardInfo(icon: Icons.attach_money_outlined, title: 'Pagos', color: Colors.orange, route: '/pagos/historial'),
-    CardInfo(icon: Icons.person_outline_sharp, title: 'Perfil', color: Colors.red, route: '/profile'),
+    CardInfo(
+        icon: Icons.car_repair,
+        title: 'Gestionar Vehiculo',
+        color: Colors.blue,
+        route: '/car/list'),
+    CardInfo(
+        icon: Icons.swipe_up_outlined,
+        title: 'Asistencia',
+        color: Colors.green,
+        route: '/asistencia'),
+    CardInfo(
+        icon: Icons.attach_money_outlined,
+        title: 'Pagos',
+        color: Colors.orange,
+        route: '/pagos/historial'),
+    CardInfo(
+        icon: Icons.person_outline_sharp,
+        title: 'Perfil',
+        color: Colors.red,
+        route: '/profile'),
     // Agrega más objetos CardInfo según sea necesario
   ];
 
@@ -26,16 +42,16 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final cardInfo = cardInfoList[index];
           return GestureDetector(
-          onTap: () {
-            // Acción a realizar al hacer clic en la tarjeta (puedes personalizar esto)
-            context.pushNamed(cardInfo.route);
-          },
-          child: CardItem(
-            icon: cardInfo.icon,
-            title: cardInfo.title,
-            color: cardInfo.color,
-          ),
-        );
+            onTap: () {
+              // Acción a realizar al hacer clic en la tarjeta (puedes personalizar esto)
+              context.pushNamed(cardInfo.route);
+            },
+            child: CardItem(
+              icon: cardInfo.icon,
+              title: cardInfo.title,
+              color: cardInfo.color,
+            ),
+          );
         },
       ),
     );
@@ -47,7 +63,11 @@ class CardItem extends StatelessWidget {
   final String title;
   final Color color;
 
-  const CardItem({ super.key,required this.icon, required this.title, required this.color});
+  const CardItem(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +84,9 @@ class CardItem extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(color: Colors.white, fontSize: 20), // Color del texto del título
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20), // Color del texto del título
           ),
         ],
       ),
@@ -78,5 +100,9 @@ class CardInfo {
   final Color color;
   final String route;
 
-  CardInfo({required this.icon, required this.title, required this.color, required this.route});
+  CardInfo(
+      {required this.icon,
+      required this.title,
+      required this.color,
+      required this.route});
 }
