@@ -5,6 +5,11 @@
 import FlutterMacOS
 import Foundation
 
+import geolocator_apple
+
+func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
+
 import file_selector_macos
 import shared_preferences_foundation
 

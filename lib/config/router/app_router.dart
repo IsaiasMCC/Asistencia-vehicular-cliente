@@ -1,9 +1,13 @@
 import 'package:asistencia_vehicular_cliente/presentation/screens/screens.dart';
+import 'package:asistencia_vehicular_cliente/presentation/screens/tecnico/home_tecnico_screen.dart';
+import 'package:asistencia_vehicular_cliente/presentation/screens/tecnico/lista_task_screen.dart';
 import 'package:asistencia_vehicular_cliente/presentation/screens/vehiculo/list_register_car_screen.dart';
+
 
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
+  // initialLocation: '/login',
   initialLocation: '/login',
   routes: [
     GoRoute(
@@ -45,6 +49,16 @@ final appRouter = GoRouter(
       path: '/profile',
       name: '/profile',
       builder: (context, state) => const ProfileScreen()
+    ),
+     GoRoute(
+      path: '/task',
+      name: '/task',
+      builder: (context, state) => const TaskScreen()
+    ),
+      GoRoute(
+      path: '/homeTaller',
+      name: '/homeTaller',
+      builder: (context, state) => const TecnicoHome()
     ),
   ]
 );
