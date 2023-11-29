@@ -4,7 +4,6 @@
 
 import FlutterMacOS
 import Foundation
-
 import audioplayers_darwin
 import file_selector_macos
 import geolocator_apple
