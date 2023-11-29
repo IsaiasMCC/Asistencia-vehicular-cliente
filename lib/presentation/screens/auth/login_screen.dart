@@ -1,4 +1,3 @@
-
 import 'package:asistencia_vehicular_cliente/presentation/blocs/loca_storage_bloc/local_storage_bloc.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/alert_dialog_custon.dart';
 import 'package:asistencia_vehicular_cliente/presentation/widgets/button_custon.dart';
@@ -19,47 +18,127 @@ class _LoginScreenState extends State<LoginScreen> {
   final _correoController = TextEditingController();
   final _contrasenaController = TextEditingController();
   final authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final localStorageBloc = context.watch<LocalStorageBloc>();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iniciar Sesión'),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        child: SingleChildScrollView(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0XFF3C3E52),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InputTextCuston(
-                  inputController: _correoController,
-                  iconInput: Icons.person,
-                  label: 'Correo',
-                  hintText: 'Ingrese su correo',
-                  inputType: TextInputType.emailAddress),
-              const SizedBox(height: 10),
-              InputTextCuston(
-                  inputController: _contrasenaController,
-                  iconInput: Icons.person,
-                  label: 'Contraseña',
-                  hintText: 'Ingrese su contraseña',
-                  inputType: TextInputType.visiblePassword,
-                  obscureText: true),
-              const SizedBox(height: 10),
-              ButtonCuston(
-                  textTitle: 'Iniciar Sesión', onPressed: () => onSubmitLogin(localStorageBloc)),
-              const SizedBox(height: 5),
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    context.replaceNamed('/register');
-                  },
-                  child: const Text(
-                    'registrarse',
-                    style: TextStyle(fontSize: 15),
-                  ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(
+                height: 80.0,
+              ),
+              const Center(
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 48.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 30.0),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/car-repair.png',
+                      width: 120.0,
+                    ),
+                    const Text(
+                      "Car Repair",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5.0),
+                      width: 150,
+                      child: const Text(
+                        "Authenticate using your email and password",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, height: 1.5),
+                      ),
+                    ),
+                    Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5.0),
+                              child: TextFormField(
+                                  controller: _correoController,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                      iconColor: Colors.white,
+                                      labelStyle:
+                                          TextStyle(color: Colors.white),
+                                      icon: Icon(Icons.mail),
+                                      labelText: "Email"),
+                                  keyboardType: TextInputType.emailAddress,
+                                  obscureText: false,
+                                  readOnly: false,
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return "Escriba su correo por favor";
+                                    }
+                                    return null;
+                                  }),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5.0),
+                              child: TextFormField(
+                                  controller: _contrasenaController,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                      iconColor: Colors.white,
+                                      labelStyle:
+                                          TextStyle(color: Colors.white),
+                                      icon: Icon(Icons.password),
+                                      labelText: "Password"),
+                                  keyboardType: TextInputType.visiblePassword,
+                                  obscureText: true,
+                                  readOnly: false,
+                                  validator: (String? value) {
+                                    if (value!.isEmpty) {
+                                      return "Escriba su password por favor";
+                                    }
+                                    return null;
+                                  }),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ButtonCuston(
+                                textTitle: 'Iniciar Sesión',
+                                onPressed: () =>
+                                    onSubmitLogin(localStorageBloc)),
+                            const SizedBox(height: 5),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  context.replaceNamed('/register');
+                                },
+                                child: const Text(
+                                  'registrarse',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
                 ),
               )
             ],
@@ -77,10 +156,14 @@ class _LoginScreenState extends State<LoginScreen> {
           .then((res) {
         if (res['success'] ?? false) {
           localStorageBloc.setUser(res['data']);
-          context.replaceNamed('/home_cliente');
+          if (res['data']['roles'][0]['rol_id'] == 2) {
+            context.replaceNamed('/home_cliente');
+          } else {
+            context.replaceNamed('/homeTaller');
+          }
           return;
         }
-        showAlertCuston(context, 'Error al autenticarse', () { 
+        showAlertCuston(context, 'Error al autenticarse', () {
           context.pop();
         });
         return;

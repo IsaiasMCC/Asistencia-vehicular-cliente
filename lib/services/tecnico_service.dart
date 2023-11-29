@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'package:asistencia_vehicular_cliente/domain/interfaces/postulaciones.dart';
 import 'package:asistencia_vehicular_cliente/domain/interfaces/task_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TecnicoService extends ChangeNotifier {
   final baseUrl = '149.50.133.183';
 
   Future<ResponsePostulacion> getPostulacion() async {
-    String tecnicoId = '1';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final user = prefs.getString('user') ?? '';
+    final ususario = json.decode(user);
+    String tecnicoId = ususario['id'];
     final url = Uri.http(
       baseUrl,
       '/public/api/tarea/$tecnicoId',
@@ -16,6 +21,16 @@ class TecnicoService extends ChangeNotifier {
     final resp = await http.get(url);
     ResponsePostulacion respuestaPostulacion =
         responsePostulacionFromJson(resp.body);
+    return respuestaPostulacion;
+  }
+   Future<ResponseAllPostulacion> getPostulaciones() async {
+    final url = Uri.http(
+      baseUrl,
+      '/public/api/all-postulaciones',
+    );
+    final resp = await http.get(url);
+    ResponseAllPostulacion respuestaPostulacion =
+        responseAllPostulacionFromJson(resp.body);
     return respuestaPostulacion;
   }
 
@@ -47,10 +62,14 @@ class TecnicoService extends ChangeNotifier {
     }
   }
 
-  Future<bool> actualizarMiPosicion()async{
+  Future<bool> actualizarMiPosicion() async {
     //TODO: obtener el id del usaurio del local sharede preferece
-    String user_id = '1';
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // String user_id = '1';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final user = prefs.getString('user') ?? '';
+    final ususario = json.decode(user);
+    String user_id = ususario['id'];
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error("Servicio de ubicación desactivado");
     }
@@ -69,9 +88,9 @@ class TecnicoService extends ChangeNotifier {
         body: body,
       );
       if (resp.statusCode == 200) {
-      // final Map<String, dynamic> decodedResp = json.decode(resp.body);
+        // final Map<String, dynamic> decodedResp = json.decode(resp.body);
         return true;
-      }else{
+      } else {
         return false;
       }
     } catch (e) {

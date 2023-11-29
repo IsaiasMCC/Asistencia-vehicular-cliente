@@ -25,4 +25,10 @@ class LocalStorageBloc extends Bloc<LocalStorageEvent, LocalStorageState> {
     final user = prefs.getString('user') ?? '';
     return json.decode(user);
   }
+
+  Future<bool> dropUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
+    return true;
+  }
 }
