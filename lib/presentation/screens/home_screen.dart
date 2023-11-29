@@ -1,4 +1,6 @@
+import 'package:asistencia_vehicular_cliente/presentation/blocs/loca_storage_bloc/local_storage_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -29,10 +31,23 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localStorageBloc = context.watch<LocalStorageBloc>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Menú'),
         centerTitle: true,
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                bool ok = await localStorageBloc.dropUser();
+                if (ok) {
+                  Future.microtask(() {
+                    context.pushReplacement('/login');
+                  });
+                }
+              })
+        ],
       ),
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -26,7 +26,6 @@ class AuthService extends ChangeNotifier {
       return {'status': 500, 'message': 'Error de conexión con servidor'};
     }
   }
-
   Future<bool?> register(RegisterData data) async {
     try {
       //final hasConnection = await hasInternet();
